@@ -32,15 +32,10 @@ class MapViewFragment : Fragment(), OnMapReadyCallback {
         mMapView.getMapAsync(this)
     }
 
-    override fun onDestroy() {
-        mMapView.onDestroy()
-        super.onDestroy()
-    }
-
     @SuppressLint("MissingPermission")
     override fun onMapReady(gMap: GoogleMap) {
         googleMap = gMap
-        googleMap.isMyLocationEnabled //TODO check permissions
+        googleMap.isMyLocationEnabled
 
         // For dropping a marker at a point on the Map
         val sydney = LatLng(-34.0, 151.0)

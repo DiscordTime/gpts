@@ -2,23 +2,18 @@ package com.discordtime.gpts.lobby
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_DENIED
 import android.os.Bundle
-import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.discordtime.gpts.R
 import com.discordtime.gpts.listplaces.view.ListPlacesFragment
 import com.discordtime.gpts.maps.view.MapViewFragment
-import com.discordtime.gpts.tools.Constants.PERMISSION_REQUEST_LOCATION_CODE
-import com.discordtime.gpts.tools.Constants.TAG_LIST_PLACE_FRAGMENT
-import com.discordtime.gpts.tools.Constants.TAG_MAPS_FRAGMENT
-import kotlinx.android.synthetic.main.activity_lobby.*
 
 class LobbyActivity : AppCompatActivity() {
 
@@ -28,6 +23,8 @@ class LobbyActivity : AppCompatActivity() {
     private val fm: FragmentManager = supportFragmentManager
     private var active: Fragment = fragmentListPlaces
 
+    private val PERMISSION = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+
     private lateinit var textMessage: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,17 +32,14 @@ class LobbyActivity : AppCompatActivity() {
         setContentView(R.layout.activity_lobby)
 
         //sets up location permission
-        setupPermissions()
+        verifyPermissions(PERMISSION)
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         toolbar = supportActionBar!!
         textMessage = findViewById(R.id.message)
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
-        initComponents()
-    }
-
-    private fun initComponents() {
+        //initiates maps fragment firstly
         fm.beginTransaction().replace(R.id.container, fragmentMaps).commit()
     }
 
@@ -71,29 +65,23 @@ class LobbyActivity : AppCompatActivity() {
         false
     }
 
-    //TODO check permissions
-    private fun setupPermissions() {
-        val permission = ContextCompat.checkSelfPermission(this,
-            Manifest.permission.ACCESS_FINE_LOCATION)
-
-        if (permission != PackageManager.PERMISSION_GRANTED)
-            makeRequest()
-    }
-
-    private fun makeRequest() {
-        ActivityCompat.requestPermissions(this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            PERMISSION_REQUEST_LOCATION_CODE)
+    private fun verifyPermissions(per: Array<String>): Boolean {
+        for(i in per.indices) {
+            val permission = ActivityCompat.checkSelfPermission(this, per[i])
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // We don't have permission so prompt the user
+                ActivityCompat.requestPermissions(this, per,1)
+                return false
+            }
+        }
+        return true
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when(requestCode) {
-            PERMISSION_REQUEST_LOCATION_CODE -> {
-                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-
-                } else {
-                }
-            }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        for (result in grantResults) {
+            if (result == PERMISSION_DENIED)
+                verifyPermissions(PERMISSION)
         }
     }
 }
