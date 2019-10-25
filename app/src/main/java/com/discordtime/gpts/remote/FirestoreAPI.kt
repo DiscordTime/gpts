@@ -21,8 +21,6 @@ class FirestoreAPI<T>(val type: Class<T>, val collection: CollectionReference): 
                 placesData.value = emptyList()
             }
         }
-
         return placesData
     }
-
 }

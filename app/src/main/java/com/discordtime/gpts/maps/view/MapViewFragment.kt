@@ -41,7 +41,6 @@ class MapViewFragment : Fragment(), OnMapReadyCallback {
         mMapView.onCreate(savedInstanceState)
         mMapView.onResume()
         mMapView.getMapAsync(this)
-        //mapViewModel = ViewModelProviders.of(this)[MapViewModel::class.java]
     }
 
     @SuppressLint("MissingPermission")
