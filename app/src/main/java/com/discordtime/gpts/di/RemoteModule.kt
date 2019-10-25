@@ -6,5 +6,5 @@ import com.discordtime.gpts.remote.RemoteAPI
 import org.koin.dsl.module
 
 val remoteModules = module {
-    factory<RemoteAPI<Place>> { FirestoreAPI() }
+    factory<RemoteAPI<Place>> { FirestoreAPI(get()) }
 }
