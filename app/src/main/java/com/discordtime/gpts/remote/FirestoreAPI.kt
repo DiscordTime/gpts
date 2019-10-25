@@ -15,7 +15,6 @@ class FirestoreAPI<T>(val type: Class<T>, val collection: CollectionReference): 
 
             if (querySnapshot != null) {
                 data.value = querySnapshot.toObjects(type)
-
             } else {
                 data.value = emptyList()
             }
