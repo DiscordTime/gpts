@@ -7,6 +7,8 @@ import com.discordtime.gpts.remote.RemoteAPI
 
 class PlaceRepository(val remoteAPI: RemoteAPI<Place>): IPlaceRepository {
 
+    //private val remoteAPI: RemoteAPI<Place> = FirestoreAPI()
+
     override fun getPlaces(): LiveData<List<Place>> {
         return remoteAPI.get()
     }
