@@ -6,10 +6,7 @@ import com.discordtime.gpts.tools.Constants.PLACES_COLLECTION
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FirestoreAPI<T>(val type: Class<T>): RemoteAPI<T> {
-
-    private val db = FirebaseFirestore.getInstance()
-    private val  collection: CollectionReference = db.collection(PLACES_COLLECTION)
+class FirestoreAPI<T>(val type: Class<T>, val collection: CollectionReference): RemoteAPI<T> {
 
     override fun get(): LiveData<List<T>> {
 
