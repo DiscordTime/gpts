@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager
 import com.discordtime.gpts.R
 import com.discordtime.gpts.listplaces.view.ListPlacesFragment
 import com.discordtime.gpts.maps.view.MapViewFragment
+import com.google.firebase.FirebaseApp
 
 class LobbyActivity : AppCompatActivity() {
 
