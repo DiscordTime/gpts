@@ -9,4 +9,6 @@ object Constants {
 
     //Value used for location permission
     const val PERMISSION_REQUEST_LOCATION_CODE = 99
+
+    const val PLACES_COLLECTION = "places"
 }
