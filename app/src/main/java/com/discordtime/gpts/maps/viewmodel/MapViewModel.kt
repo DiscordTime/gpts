@@ -16,9 +16,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapViewModel: ViewModel() {
+class MapViewModel(val repository: IPlaceRepository): ViewModel() {
 
-    private val repository: IPlaceRepository = PlaceRepository()
     private lateinit var googleMap: GoogleMap
 
     private val placesData: LiveData<List<Place>> = repository.getPlaces()
