@@ -26,7 +26,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class MapViewFragment : Fragment(), OnMapReadyCallback {
 
-    private lateinit var mapViewModel: MapViewModel
+    private val mapViewModel: MapViewModel by viewModel()
     private lateinit var mMapView: MapView
     private lateinit var googleMap: GoogleMap
 
@@ -41,7 +41,6 @@ class MapViewFragment : Fragment(), OnMapReadyCallback {
         mMapView.onCreate(savedInstanceState)
         mMapView.onResume()
         mMapView.getMapAsync(this)
-        mapViewModel = ViewModelProviders.of(this)[MapViewModel::class.java]
     }
 
     @SuppressLint("MissingPermission")

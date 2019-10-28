@@ -7,27 +7,24 @@ import com.discordtime.gpts.tools.Constants.PLACES_COLLECTION
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FirestoreAPI: RemoteAPI<Place> {
+class FirestoreAPI<T>(val type: Class<T>, val collection: CollectionReference): RemoteAPI<T> {
 
-    private val db = FirebaseFirestore.getInstance()
-    private val  collection: CollectionReference = db.collection(PLACES_COLLECTION)
+    override fun get(): LiveData<List<T>> {
 
-    override fun get(): LiveData<List<Place>> {
-
-        val placesData = MutableLiveData<List<Place>>()
+        val data = MutableLiveData<List<T>>()
 
         collection.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
             if (firebaseFirestoreException != null) return@addSnapshotListener
 
             if (querySnapshot != null) {
-                placesData.value = querySnapshot.toObjects(Place::class.java)
+                data.value = querySnapshot.toObjects(type)
             } else {
-                placesData.value = emptyList()
+                data.value = emptyList()
             }
         }
 
 
-        return placesData
+        return data
     }
 
 }
