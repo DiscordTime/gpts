@@ -1,34 +1,36 @@
 package com.discordtime.gpts.maps.view
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.discordtime.gpts.R
+import com.discordtime.gpts.maps.viewmodel.LocationListener
+import com.discordtime.gpts.maps.viewmodel.LocationManager
 import com.discordtime.gpts.maps.viewmodel.MapViewModel
+import com.discordtime.gpts.tools.Constants
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.*
-import com.google.firebase.FirebaseApp
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class MapViewFragment : Fragment(), OnMapReadyCallback {
+class MapViewFragment : Fragment(), OnMapReadyCallback, LocationListener {
+
+    private val CAMERA_MAPS_ZOOM = 18.5f
 
     private val mapViewModel: MapViewModel by viewModel()
+    private lateinit var mContext: Context
     private lateinit var mMapView: MapView
-    private lateinit var googleMap: GoogleMap
+    private lateinit var mGoogleMap: GoogleMap
+    private lateinit var mLocationManager: LocationManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_maps, container, false)
@@ -41,14 +43,24 @@ class MapViewFragment : Fragment(), OnMapReadyCallback {
         mMapView.onCreate(savedInstanceState)
         mMapView.onResume()
         mMapView.getMapAsync(this)
+
+        mLocationManager = LocationManager(mContext, this)
+        mLocationManager.startLocationUpdates()
     }
 
-    @SuppressLint("MissingPermission")
-    override fun onMapReady(gMap: GoogleMap) {
-        googleMap = gMap
-        googleMap.isMyLocationEnabled
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+    }
 
-        // test
+    override fun onMapReady(gMap: GoogleMap) {
+        mGoogleMap = gMap
+        mGoogleMap.isMyLocationEnabled = true //enables location button (blue)
+        mGoogleMap.uiSettings.isCompassEnabled = false
+        mGoogleMap.uiSettings.isRotateGesturesEnabled = false
+        mGoogleMap.uiSettings.isTiltGesturesEnabled = false
+
+         //test
         mapViewModel.getMarkedPlaces().observe(this, Observer {
             it.forEach {
                     place ->
@@ -56,12 +68,17 @@ class MapViewFragment : Fragment(), OnMapReadyCallback {
                 mapViewModel.addMarker(place, gMap, view!!.context)
             }
         })
+    }
 
-        // For dropping a marker at a point on the Map
-        val recife = LatLng(-8.055747, -34.871044)
+    override fun onLocationChanged(location: Location) {
+        val currentLocation = LatLng(location.latitude, location.longitude)
 
         // For zooming automatically to the location of the marker
-        val cameraPosition = CameraPosition.Builder().target(recife).zoom(12f).build()
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        val cameraPosition = CameraPosition.Builder()
+            .target(currentLocation)
+            .zoom(CAMERA_MAPS_ZOOM)
+            .build()
+
+        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 }
