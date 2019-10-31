@@ -10,5 +10,8 @@ object Constants {
     //Value used for location permission
     const val PERMISSION_REQUEST_LOCATION_CODE = 99
 
+    //maps camera default zoom
+    const val CAMERA_MAPS_ZOOM = 18.5f
+
     const val PLACES_COLLECTION = "places"
 }
